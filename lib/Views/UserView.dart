@@ -44,7 +44,7 @@ class _UserProfileState extends State<UserView> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         ElevatedButton(onPressed: _signOut, child: const Text("Log Out")),
       ],
