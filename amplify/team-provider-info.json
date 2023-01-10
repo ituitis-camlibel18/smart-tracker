@@ -1,0 +1,25 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-smarttracker-staging-220936-authRole",
+      "UnauthRoleArn": "arn:aws:iam::687093341680:role/amplify-smarttracker-staging-220936-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::687093341680:role/amplify-smarttracker-staging-220936-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-smarttracker-staging-220936-deployment",
+      "UnauthRoleName": "amplify-smarttracker-staging-220936-unauthRole",
+      "StackName": "amplify-smarttracker-staging-220936",
+      "StackId": "arn:aws:cloudformation:eu-central-1:687093341680:stack/amplify-smarttracker-staging-220936/4e4ee5c0-906a-11ed-9f2b-06039d140498",
+      "AmplifyAppId": "d25u89zo6k47hn"
+    },
+    "categories": {
+      "auth": {
+        "smarttracker": {
+          "userPoolId": "eu-central-1_ZzS9ZHkTV",
+          "userPoolName": "users",
+          "webClientId": "5sj3md73tak5292chs88vqchmp",
+          "nativeClientId": "5sj3md73tak5292chs88vqchmp"
+        }
+      }
+    }
+  }
+}
