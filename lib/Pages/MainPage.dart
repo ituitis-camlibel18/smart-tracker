@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 
 import 'package:sample_app/Views/UserView.dart';
 
+
+
 class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();
@@ -35,19 +37,17 @@ class _MainPageState extends State<MainPage> {
 
   void _loadImages() async {
     try {
-      print('In list');
-      S3ListOptions options =
-          S3ListOptions(accessLevel: StorageAccessLevel.guest);
-      ListResult result = await Amplify.Storage.list(options: options);
+      String graphQLDocument = '''query FirstRun {
+    firstRun
+  }''';
+      var operation = Amplify.API.query(
+          request: GraphQLRequest<String>(document: graphQLDocument)
+      );
 
-      var newList = itemKeys.toList();
-      for (StorageItem item in result.items) {
-        newList.add(item.key);
-      }
+      var response = await operation.response;
+      var data = response.data;
 
-      setState(() {
-        itemKeys = newList;
-      });
+      print('Query result: ' + data.toString());
     } catch (e) {
       print('List Err: ' + e.toString());
     }
@@ -69,7 +69,7 @@ class _MainPageState extends State<MainPage> {
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print("pressed");
+         _loadImages();
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),

@@ -14,6 +14,7 @@
  */
 
 import 'package:amplify_analytics_pinpoint/amplify_analytics_pinpoint.dart';
+import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
@@ -21,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:sample_app/Pages/LoadingPage.dart';
 
 import 'Pages/LandingPage.dart';
+import 'Pages/MainPage.dart';
 
 /*
 IMPORTANT - THIS LINE WILL NOT COMPILE
@@ -45,6 +47,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _isAmplifyConfigured = false;
+  bool _isLoggedIn = false;
 
   @override
   initState() {
@@ -54,6 +57,8 @@ class _MyAppState extends State<MyApp> {
 
   void _initAmplifyFlutter() async {
     AmplifyAuthCognito auth = AmplifyAuthCognito();
+    final api = AmplifyAPI();
+    Amplify.addPlugin(AmplifyAPI());
 
 
     Amplify.addPlugins([auth]);
@@ -64,10 +69,26 @@ class _MyAppState extends State<MyApp> {
     "UserAgent": "aws-amplify-cli/2.0",
     "Version": "1.0",
    
-  
+     "aws_appsync_graphqlEndpoint": "https://mplvhmebgfbopbmp3tzc2lthiu.appsync-api.eu-central-1.amazonaws.com/graphql",
+    "aws_appsync_region": "eu-central-1",
+    "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
+    "aws_appsync_apiKey": "da2-xokehcaf3bfqhfszxsdz7xn3pa",
   
 
-
+    "api": {
+        "plugins": {
+            "awsAPIPlugin": {
+                "smart-tracker": {
+                    "endpointType": "GraphQL",
+                    "endpoint": "https://mplvhmebgfbopbmp3tzc2lthiu.appsync-api.eu-central-1.amazonaws.com/graphql",
+                    "region": "eu-central-1",
+                    "authorizationType": "AMAZON_COGNITO_USER_POOLS",
+                    "apiKey": "da2-xokehcaf3bfqhfszxsdz7xn3pa"
+                    
+                }
+            }
+        }
+    },
  
   
     "auth": {
@@ -113,6 +134,15 @@ class _MyAppState extends State<MyApp> {
         }
     }
 }''');
+      try{
+      var user = await Amplify.Auth.getCurrentUser();
+      setState(() {
+        _isLoggedIn = true;
+      });
+      }catch(e){
+       print("no user");
+
+      };
     } on AmplifyAlreadyConfiguredException {
       print(
           "Amplify was already configured. Looks like app restarted on android.");
@@ -125,6 +155,9 @@ class _MyAppState extends State<MyApp> {
 
   Widget _display() {
     if (_isAmplifyConfigured) {
+      if(_isLoggedIn){
+        return MainPage();
+      }
       return LandingPage();
     } else {
       return LoadingPage();
@@ -134,6 +167,7 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
         title: 'Flutter Amplify App',
         theme: ThemeData(
