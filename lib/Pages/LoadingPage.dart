@@ -21,7 +21,7 @@ class LoadingPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Landing Page")),
       body:
-          Center(child: Text("Please Wait.  Configuring Amplify Flutter SDK1")),
+      Center(child: Text("Please Wait.  Configuring Amplify Flutter SDK1")),
     );
   }
 }

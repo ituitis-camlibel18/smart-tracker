@@ -24,12 +24,12 @@ import 'dart:math' as math;
 
 import '../Components/Sidebar.dart';
 
-class MainPage extends StatefulWidget {
+class AdminPage extends StatefulWidget {
   @override
-  _MainPageState createState() => _MainPageState();
+  _AdminPageState createState() => _AdminPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _AdminPageState extends State<AdminPage> {
   List itemKeys = [];
   List<dynamic> tempKeys = [];
   String errorMessage = "";
@@ -41,16 +41,14 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _loadImages() async {
+
+
     try {
-      String graphQLDocument = '''query GetLinks {
-    getLinks{
-    filter
-    tracktion_name
-	  current_value
-	  sk
-	  pk
-	  previous_value
-	  update_time
+      String graphQLDocument = '''query ListUsers {
+    listUsers{
+    username
+    email
+    sub
     }
     
     
@@ -63,8 +61,9 @@ class _MainPageState extends State<MainPage> {
 
       var data = response.data;
       var jsonData = jsonDecode(response.data);
+      print(data);
       setState(() {
-        tempKeys = jsonData['getLinks'];
+        tempKeys = jsonData["listUsers"];
       });
 
       //print(tempKeys);
@@ -81,7 +80,7 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  void showdeletecontent(sk) {
+  void showdeletecontent(username) {
     showDialog(
       context: context, barrierDismissible: false, // user must tap button!
 
@@ -94,41 +93,41 @@ class _MainPageState extends State<MainPage> {
           content: new SingleChildScrollView(
             child: new ListBody(
               children: [
-                new Text('Are you sure you want to delete the link?'),
+                new Text('Are you sure you want to delete the user?'),
                 new ElevatedButton(
                   child: new Text('Close Window'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                   style:
-                      ElevatedButton.styleFrom(backgroundColor: Colors.black12),
+                  ElevatedButton.styleFrom(backgroundColor: Colors.black12),
                 ),
                 ElevatedButton(
                     onPressed: () async {
                       try {
                         String graphQLDocument =
-                            '''mutation DeleteLink(\$sk: String!) {
- deleteLink(sk: \$sk)
+                        '''mutation DeleteUser(\$username: String!) {
+ deleteUser(username: \$username)
 }`''';
                         var operation = Amplify.API.mutate(
                             request: GraphQLRequest<String>(
                                 document: graphQLDocument,
                                 variables: {
-                              'sk': sk,
-                            }));
+                                  'username': username,
+                                }));
                         var response;
 
                         response = await operation.response;
                         _loadImages();
-                        var data = jsonDecode(response.data)["deleteLink"];
+                        var data = jsonDecode(response.data)["deleteUser"];
                         Navigator.of(context).pop();
                       } catch (e) {
                         print(e);
                       }
                     },
                     style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                    child: Text("Delete Link")),
+                    ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    child: Text("Delete User")),
               ],
             ),
           ),
@@ -138,70 +137,44 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  void _showcontent(url, sk, tempKey) {
+  void _showcontent(tempKey) {
     print(tempKey["update_time"]);
     showDialog(
       context: context, barrierDismissible: false, // user must tap button!
 
       builder: (BuildContext context) {
         return new AlertDialog(
-          title: new Text('Link'),
+          title: new Text('User'),
           content: new SingleChildScrollView(
             child: new ListBody(
               children: [
                 Card(
                     color:
-                        Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
-                            .withOpacity(0.4),
+                    Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
+                        .withOpacity(0.4),
                     surfaceTintColor: Colors.black,
                     child: ListTile(
-                      title: Text(tempKey["tracktion_name"]),
-                      subtitle: Text(tempKey["filter"]
-                          .split("#")[2]
-                          .replaceAll("link", "Link: ")),
+                      title: Text(tempKey["username"]),
+                      subtitle: Text(tempKey["email"]),
                       leading: CircleAvatar(
                         backgroundColor: Colors.white,
-                        child: Text(tempKey["tracktion_name"][0].toUpperCase()),
+                        child: Text(tempKey["username"][0].toUpperCase()),
                       ),
                     )),
-                ElevatedButton(
-                    onPressed: () {
-                      _redirect(url);
-                    },
-                    child: Text("Redirect to the page")),
+
                 ElevatedButton(
                     onPressed: () async {
                       Navigator.of(context).pop();
-                      showdeletecontent(sk);
+                      showdeletecontent(tempKey["username"]);
                     },
                     style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                    child: Text("Delete Link")),
+                    ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    child: Text("Delete User")),
 
-                Text("Recent Update Times: "),
-                ListView.builder(
 
-                  itemCount: tempKey["update_time"].length,
-                  physics: ClampingScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return InkWell(
-                      child: Card(
-                          color: Color((math.Random().nextDouble() * 0xFFFFFF)
-                                  .toInt())
-                              .withOpacity(0.4),
-                          surfaceTintColor: Colors.black,
-                          child: ListTile(
-                            title: Text(tempKey["update_time"][index]),
 
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              child: Icon(Icons.access_time),
-                            ),
-                          )),
-                    );
-                  },
-                ),
+
+
               ],
             ),
           ),
@@ -228,7 +201,7 @@ class _MainPageState extends State<MainPage> {
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, setState) {
           return new AlertDialog(
-            title: new Text('Add Link'),
+            title: new Text('Insert User'),
             content: new SingleChildScrollView(
               child: new ListBody(
                 children: [
@@ -237,15 +210,15 @@ class _MainPageState extends State<MainPage> {
                     decoration: const InputDecoration(
                       icon: Icon(Icons.info),
                       hintText: 'Example',
-                      labelText: 'Traction Name*',
+                      labelText: 'Username*',
                     ),
                   ),
                   TextFormField(
                     controller: linkTextController,
                     decoration: const InputDecoration(
                       icon: Icon(Icons.info),
-                      hintText: 'https:/www.example.com',
-                      labelText: 'Link Text*',
+                      hintText: 'example@example.com',
+                      labelText: 'Email*',
                     ),
                   ),
                   Text(
@@ -262,21 +235,21 @@ class _MainPageState extends State<MainPage> {
                           var link = {"link": linkText, "name": linkName};
 
                           String graphQLDocument =
-                              '''mutation InsertLink(\$name: String!,\$link: String!) {
- insertLink(name: \$name,link: \$link)
+                          '''mutation InsertUser(\$username: String!,\$email: String!) {
+ insertUser(username: \$username,email: \$email)
 }`''';
                           var operation = Amplify.API.mutate(
                               request: GraphQLRequest<String>(
                                   document: graphQLDocument,
                                   variables: {
-                                'name': linkName,
-                                'link': linkText
-                              }));
+                                    'username': linkName,
+                                    'email': linkText
+                                  }));
                           var response;
 
                           response = await operation.response;
                           _loadImages();
-                          var data = jsonDecode(response.data)["insertLink"];
+                          var data = jsonDecode(response.data)["insertUser"];
 
                           if (data.toString() == "true") {
                             Navigator.of(context).pop();
@@ -284,14 +257,14 @@ class _MainPageState extends State<MainPage> {
                             print(data);
                             setState(() {
                               errorMessage =
-                                  "Please check the link and traction name information";
+                              "Please provide a valid username and email";
                             });
                           }
                         } catch (e) {
                           print(e);
                         }
                       },
-                      child: Text("Add Link"))
+                      child: Text("Add User"))
                 ],
               ),
             ),
@@ -319,33 +292,28 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
           title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [Text("Main Page"), UserView()])),
+              children: [Text("Admin Dashboard"), UserView()])),
       body: ListView.builder(
           itemCount: tempKeys.length,
           itemBuilder: (context, index) {
             return InkWell(
                 onTap: () {
                   _showcontent(
-                      tempKeys[index]["filter"]
-                          .split("#")[2]
-                          .replaceAll("link", ""),
-                      tempKeys[index]["sk"],
+
                       tempKeys[index]);
                 },
                 child: Card(
                     color:
-                        Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
-                            .withOpacity(0.4),
+                    Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
+                        .withOpacity(0.4),
                     surfaceTintColor: Colors.black,
                     child: ListTile(
-                      title: Text(tempKeys[index]["tracktion_name"]),
-                      subtitle: Text(tempKeys[index]["filter"]
-                          .split("#")[2]
-                          .replaceAll("link", "Link: ")),
+                      title: Text(tempKeys[index]["username"]),
+                      subtitle: Text(tempKeys[index]["email"]),
                       leading: CircleAvatar(
                         backgroundColor: Colors.white,
                         child: Text(
-                            tempKeys[index]["tracktion_name"][0].toUpperCase()),
+                            tempKeys[index]["username"][0].toUpperCase()),
                       ),
                     )));
           }),

@@ -135,12 +135,12 @@ class _MyAppState extends State<MyApp> {
     }
 }''');
       try{
-      var user = await Amplify.Auth.getCurrentUser();
-      setState(() {
-        _isLoggedIn = true;
-      });
+        var user = await Amplify.Auth.getCurrentUser();
+        setState(() {
+          _isLoggedIn = true;
+        });
       }catch(e){
-       print("no user");
+        print("no user");
 
       };
     } on AmplifyAlreadyConfiguredException {

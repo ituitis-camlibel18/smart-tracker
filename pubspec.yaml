@@ -35,6 +35,7 @@ dependencies:
   amplify_api: ^0.6.0
   aws_appsync_api: ^2.0.0
   url_launcher: ^6.1.7
+  aws_sns_api: ^2.0.0
 
 
 

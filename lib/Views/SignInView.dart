@@ -38,6 +38,7 @@ class _SignInViewState extends State<SignInView> {
     // Sign out before in case a user is already signed in
     // If a user is already signed in - Amplify.Auth.signIn will throw an exception
     try {
+
       await Amplify.Auth.signOut();
     } on AuthException catch (e) {
       print(e);
