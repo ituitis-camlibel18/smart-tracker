@@ -75,7 +75,7 @@ class _MyDrawerState extends State<MyDrawer> {
             title: Text('Admin Dashboard'),
             onTap: () {
               Navigator.pushAndRemoveUntil(context,
-                  MaterialPageRoute(builder: (context) => AdminPage()), (route) => false);;
+                  MaterialPageRoute(builder: (context) => AdminPage()), (route) => false);
             },
           ):ListTile(
 

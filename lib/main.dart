@@ -20,6 +20,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:sample_app/Pages/LoadingPage.dart';
+import 'package:sample_app/screen/intro_slider_screen.dart';
 
 import 'Pages/LandingPage.dart';
 import 'Pages/MainPage.dart';
@@ -158,7 +159,7 @@ class _MyAppState extends State<MyApp> {
       if(_isLoggedIn){
         return MainPage();
       }
-      return LandingPage();
+      return AnimatedIntroductionSlider();
     } else {
       return LoadingPage();
     }
